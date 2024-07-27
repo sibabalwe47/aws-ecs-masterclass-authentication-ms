@@ -28,27 +28,12 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      # - name: Build and push
-      #   uses: docker/build-push-action@v2
-      #   with:
-      #     context: ./
-      #     file: ./Dockerfile
-      #     push: true
-      #     tags: ${{ secrets.DOCKERHUB_USERNAME }}/instagram-on-aws-auth:${GITHUB_SHA}
-
-      # - name: Install AWS CLI v2
-      #   run: |
-      #     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
-      #     unzip -q /tmp/awscliv2.zip -d /tmp
-      #     rm /tmp/awscliv2.zip
-      #     sudo /tmp/aws/install --update
-      #     rm -rf /tmp/aws/
-      #     aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/instagram-on-aws-auth
-      #     docker build -t $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/instagram-on-aws-auth .
-      #     docker push $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/instagram-on-aws-auth:$GITHUB_SHA
+      - name: Build, tag, and push the image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: kloudspacewithsiba/authentication
+          IMAGE_TAG: latest #${{ steps.get-commit-hash.outputs.commit-hash }}-${{ steps.get-timestamp.outputs.timestamp }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
