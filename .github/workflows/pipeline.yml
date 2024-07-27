@@ -4,12 +4,13 @@ on:
     branches: [main]
 
 permissions:
-  id-token: write # This is required for requesting the JWT
-  contents: read # This is required for actions/checkout
+  id-token: write
+  contents: read
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
-  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+  AWS_IAM_ROLE_ARN: ${{ secrets.AWS_IAM_ROLE }}
+  AWS_ECR_REPO_NAME: ${{ secrets.AWS_ECR_REPO_NAME }}
 jobs:
   Build:
     runs-on: ubuntu-latest
@@ -20,7 +21,7 @@ jobs:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::211125470998:role/GitHubActionsCICDAssumeRole #change to reflect your IAM role’s ARN
+          role-to-assume: ${{ env.AWS_IAM_ROLE_ARN }}
           role-session-name: GitHubActionsCICDAssumeRole
           aws-region: ${{ env.AWS_REGION }}
 
@@ -28,12 +29,20 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Get commit hash
+        id: get-commit-hash
+        run: echo "::set-output name=commit-hash::$(git rev-parse --short HEAD)"
+
+      - name: Get timestamp
+        id: get-timestamp
+        run: echo "::set-output name=timestamp::$(date +'%Y-%m-%d-%H-%M')"
+
       - name: Build, tag, and push the image to Amazon ECR
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: kloudspacewithsiba/authentication
-          IMAGE_TAG: latest #${{ steps.get-commit-hash.outputs.commit-hash }}-${{ steps.get-timestamp.outputs.timestamp }}
+          ECR_REPOSITORY: ${{ env.AWS_ECR_REPO_NAME }}
+          IMAGE_TAG: ${{ steps.get-commit-hash.outputs.commit-hash }}-${{ steps.get-timestamp.outputs.timestamp }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
