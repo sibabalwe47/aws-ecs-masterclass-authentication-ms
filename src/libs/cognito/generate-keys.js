@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const url = `https://cognito-idp.us-east-1.amazonaws.com/us-east-1_3wO1ZRnnd/.well-known/jwks.json`;
-// https://cognito-idp.us-east-1.amazonaws.com/us-east-1_3wO1ZRnnd/.well-known/jwks.json
+const url = `https://cognito-idp.${process.env.ENVIRONMENT_REGION}.amazonaws.com/${process.env.USERPOOL_ID}/.well-known/jwks.json`;
+
 
 export const generatePublicKeys = async () => {
   try {
