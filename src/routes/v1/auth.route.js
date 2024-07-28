@@ -20,4 +20,6 @@ route.post("/validate-session", AuthController.validateUserSession);
 
 route.post("/sign-out", AuthController.signOut);
 
+route.get("/health", AuthController.healthCheck)
+
 export default route;

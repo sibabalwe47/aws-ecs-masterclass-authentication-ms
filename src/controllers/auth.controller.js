@@ -293,6 +293,12 @@ const signOut = async (req, res) => {
   }
 };
 
+const healthCheck = async(req, res) => {
+  res.status(200).json({
+    message: "OK",
+  });
+}
+
 export default {
   signUp,
   signIn,
@@ -303,4 +309,5 @@ export default {
   changePassword,
   validateUserSession,
   signOut,
+  healthCheck
 };
