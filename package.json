@@ -1,14 +1,14 @@
 {
   "name": "authentication",
   "version": "1.0.0",
-  "description": "Authentication service for +oneX backend service platforms.",
+  "description": "Authentication service for microservice architecture.",
   "main": "app.ts",
   "type": "module",
   "scripts": {
-    "test": "clear"
+    "test": "clear",
+    "start": "nodemon ./src/app.js"
   },
-  "start": "nodemon app.js",
-  "author": "+OneX DevOps Team",
+  "author": "Siba N.",
   "license": "MIT",
   "devDependencies": {
     "@tsconfig/node16": "^16.1.0",

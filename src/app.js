@@ -14,13 +14,16 @@ app.use(bodyParser.json());
 // Environment vars
 config({ path: "../.env" });
 
+const PORT = process.env.PORT || 4000
+
+
+
 // Routes
 import authRoutes from "./routes/v1/auth.route.js";
-import logRoutes from "./routes/v1/logs.route.js";
 // Paths
 app.use(`/api/v1/auth`, authRoutes);
-app.use(`/api/v1/logs`, logRoutes);
+// app.use(`/api/v1/logs`, logRoutes);
 
-app.listen(process.env.PORT, async () => {
+app.listen(PORT, async () => {
   startup.initialise();
 });
