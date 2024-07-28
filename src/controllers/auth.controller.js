@@ -3,6 +3,7 @@
 import * as authProvider from "../libs/cognito/index.js";
 import * as sessionProvider from "../libs/dynamodb/index.js";
 import * as Logger from "../utils/logger.js";
+import axios from "axios";
 
 const signUp = async (req, res) => {
   try {
@@ -38,7 +39,12 @@ const signIn = async (req, res) => {
 
     const result = await authProvider.signInHandler(email, password);
 
-    //const generateSession = await sessionProvider.putItemHandler(result);
+    // Send session data to middleware service
+    const { data } = await axios.post(`${process.env.MIDDLEWARE_SERVICE_URL}/api/v1/session/store-session`, {
+      userId: result.userId,
+      email: result.email,
+      token: result.token
+    });
 
     Logger.writeLog({
       url: req.url,
