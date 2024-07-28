@@ -38,7 +38,7 @@ const signIn = async (req, res) => {
 
     const result = await authProvider.signInHandler(email, password);
 
-    const generateSession = await sessionProvider.putItemHandler(result);
+    //const generateSession = await sessionProvider.putItemHandler(result);
 
     Logger.writeLog({
       url: req.url,
@@ -294,6 +294,11 @@ const signOut = async (req, res) => {
 };
 
 const healthCheck = async(req, res) => {
+  Logger.writeLog({
+    url: req.url,
+    result: "OK",
+    msg: "Authentication service is healthy",
+  });
   res.status(200).json({
     message: "OK",
   });
