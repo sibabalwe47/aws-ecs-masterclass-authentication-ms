@@ -16,8 +16,6 @@ config({ path: "../.env" });
 
 const PORT = process.env.PORT || 4000
 
-
-
 // Routes
 import authRoutes from "./routes/v1/auth.route.js";
 // Paths
