@@ -40,7 +40,7 @@ const signIn = async (req, res) => {
     const result = await authProvider.signInHandler(email, password);
 
     // Send session data to middleware service
-    const { data } = await axios.post(`${process.env.MIDDLEWARE_SERVICE_URL}/api/v1/session/store-session`, {
+    const { data } = await axios.post(`${process.env.MIDDLEWARE_SERVICE_URL}/api/v1/sessions/store-session`, {
       userId: result.userId,
       email: result.email,
       token: result.token
